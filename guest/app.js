@@ -1,9 +1,12 @@
 // ====== CONFIG ======
-const API_BASE = "https://YOUR_N8N_DOMAIN/webhook"; // שנה לכתובת שלך
+// Change this to your n8n base webhook URL.
+// Example: "https://n8n.yourdomain.com/webhook"
+const API_BASE = "https://YOUR_N8N_DOMAIN/webhook";
+
 const SUBMIT_URL = `${API_BASE}/wishforge/submit`;
 const STATUS_URL = (id) => `${API_BASE}/wishforge/status/${encodeURIComponent(id)}`;
 
-// ====== UI ======
+// ====== Elements ======
 const form = document.getElementById("wishForm");
 const wishText = document.getElementById("wishText");
 const count = document.getElementById("count");
@@ -14,18 +17,40 @@ const thanks = document.getElementById("thanks");
 const developing = document.getElementById("developing");
 const download = document.getElementById("download");
 const again = document.getElementById("again");
+const quietToggle = document.getElementById("quietToggle");
 
-wishText.addEventListener("input", () => count.textContent = wishText.value.length);
+// ====== UX: count chars ======
+wishText.addEventListener("input", () => {
+  count.textContent = String(wishText.value.length);
+});
 
+// ====== Quiet mode ======
+let quietOn = false;
+
+function setQuiet(on){
+  quietOn = on;
+  document.body.classList.toggle("writing", on);
+  quietToggle.setAttribute("aria-pressed", on ? "true" : "false");
+  quietToggle.textContent = on ? "מצב כתיבה שקט ✓" : "מצב כתיבה שקט";
+}
+
+quietToggle.addEventListener("click", () => setQuiet(!quietOn));
+wishText.addEventListener("focus", () => setQuiet(true));
+wishText.addEventListener("blur", () => { /* keep if user toggled manually */ });
+
+// ====== Again ======
 again.addEventListener("click", () => {
   result.classList.add("hidden");
   imgOut.style.display = "none";
   developing.style.display = "block";
+  caption.textContent = "קיבלנו! רגע… מכינים לכם תמונה 🙂";
+  thanks.textContent = "";
   form.reset();
   count.textContent = "0";
   window.scrollTo({top:0, behavior:"smooth"});
 });
 
+// ====== Submit ======
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -33,12 +58,22 @@ form.addEventListener("submit", async (e) => {
   data.text = (data.text || "").trim();
   data.fromName = (data.fromName || "").trim();
 
-  // UX: show result block immediately
+  if(!data.fromName){
+    alert("רק שם קצר כדי שנדע ממי זה 🙂");
+    return;
+  }
+  if(data.text.length < 3){
+    alert("תוסיפו עוד מילה-שתיים 🙂");
+    return;
+  }
+
+  // Show result area immediately (fast feedback)
   result.classList.remove("hidden");
-  caption.textContent = "מכינים קסם…";
-  thanks.textContent = "";
+  caption.textContent = "קיבלנו! רגע… מכינים לכם תמונה 🙂";
+  thanks.textContent = "תודה! אנחנו ממש מתרגשים לקרוא את זה 🤍";
   imgOut.style.display = "none";
   developing.style.display = "block";
+  download.removeAttribute("href");
   window.scrollTo({top: document.body.scrollHeight, behavior:"smooth"});
 
   try{
@@ -53,18 +88,20 @@ form.addEventListener("submit", async (e) => {
 
     const jobId = payload.jobId;
     caption.textContent = "מפתחים תמונה… (עוד רגע)";
+    thanks.textContent = "זה נכנס למצגת ולספר שלנו. תודה ענקית!";
+
     await poll(jobId);
 
   }catch(err){
     caption.textContent = "אופס… משהו השתבש 😅";
-    thanks.textContent = "נסו שוב בעוד רגע. אם זה חוזר — תגידו לזוג.";
+    thanks.textContent = "נסו שוב בעוד רגע. ואם זה חוזר — תגידו לזוג.";
     console.error(err);
   }
 });
 
 async function poll(jobId){
   const start = Date.now();
-  const timeoutMs = 150000; // 2.5 דקות
+  const timeoutMs = 150000; // 2.5 minutes
 
   while(true){
     if(Date.now() - start > timeoutMs){
@@ -73,7 +110,7 @@ async function poll(jobId){
       return;
     }
 
-    const res = await fetch(STATUS_URL(jobId));
+    const res = await fetch(STATUS_URL(jobId), { cache:"no-store" });
     const s = await res.json();
 
     if(s.status === "done" && s.imageUrl){
@@ -81,8 +118,8 @@ async function poll(jobId){
       imgOut.src = s.imageUrl;
       imgOut.onload = () => {
         imgOut.style.display = "block";
-        caption.textContent = s.caption || "תודה! הברכה נכנסה לספר 💛";
-        thanks.textContent = "איזה כיף. זכיתם בדף בספר שלנו 🙂";
+        caption.textContent = s.caption || "איזה כיף. תודה! 🤍";
+        thanks.textContent = "הברכה נשמרה אצלנו — אתם אלופים 🙂";
         download.href = s.imageUrl;
       };
       return;
@@ -100,30 +137,39 @@ async function poll(jobId){
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-// ====== Particles (simple) ======
+// ====== Lightweight particles ======
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let W,H,stars=[];
+
 function resize(){
-  W=canvas.width=window.innerWidth*devicePixelRatio;
-  H=canvas.height=window.innerHeight*devicePixelRatio;
-  stars = Array.from({length:120}, ()=>({
-    x:Math.random()*W, y:Math.random()*H,
-    r:(Math.random()*1.8+0.4)*devicePixelRatio,
-    v:(Math.random()*0.4+0.15)*devicePixelRatio,
-    a:Math.random()*0.6+0.2
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  W = canvas.width = Math.floor(window.innerWidth * dpr);
+  H = canvas.height = Math.floor(window.innerHeight * dpr);
+
+  const n = Math.floor((window.innerWidth * window.innerHeight) / 18000); // adaptive
+  stars = Array.from({length: Math.max(40, Math.min(120, n))}, () => ({
+    x: Math.random()*W,
+    y: Math.random()*H,
+    r: (Math.random()*1.5 + 0.4),
+    v: (Math.random()*0.25 + 0.08),
+    a: (Math.random()*0.35 + 0.12)
   }));
+  ctx.fillStyle = "#ffffff";
 }
-window.addEventListener("resize", resize); resize();
+window.addEventListener("resize", resize);
+resize();
 
 function tick(){
   ctx.clearRect(0,0,W,H);
   for(const s of stars){
     s.y += s.v;
-    if(s.y>H){ s.y=0; s.x=Math.random()*W; }
+    if(s.y > H){ s.y = 0; s.x = Math.random()*W; }
     ctx.globalAlpha = s.a;
-    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fill();
   }
   requestAnimationFrame(tick);
 }
-ctx.fillStyle="#fff"; tick();
+tick();
