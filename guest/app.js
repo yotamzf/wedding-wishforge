@@ -67,11 +67,13 @@ form.addEventListener("submit", async (e) => {
     caption.textContent = "מכינים תמונה… עוד רגע 🙂";
     await poll(jobId);
 
-  }catch(err){
+    } catch (err) {
+    alert("ERROR: " + (err?.message || err)); // <-- הוסף
     caption.textContent = "אופס… משהו השתבש 😅";
     thanks.textContent = "נסו שוב בעוד רגע. ואם זה חוזר — תגידו לזוג.";
     console.error(err);
   }
+
 });
 
 async function poll(jobId){
