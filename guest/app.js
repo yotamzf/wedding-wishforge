@@ -1,5 +1,5 @@
 // ====== CONFIG ======
-const API_BASE = "https://YOUR_N8N_DOMAIN/webhook"; // change me
+const API_BASE = "https://yotamzf.app.n8n.cloud/webhook-test/4b7f2217-12d0-40da-bb75-e056d3bbec18"; // change me
 const SUBMIT_URL = `${API_BASE}/wishforge/submit`;
 const STATUS_URL = (id) => `${API_BASE}/wishforge/status/${encodeURIComponent(id)}`;
 
