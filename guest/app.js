@@ -60,12 +60,12 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(data)
     });
 
-    const payload = await res.json();
-    if(!res.ok) throw new Error(payload?.error || "Submit failed");
+    let payloadText = await res.text(); // לא json בינתיים
+    caption.textContent = "נשלח בהצלחה ✅";
+    thanks.textContent = "התקבל ב־n8n. תודה! 🤍";
+    console.log("Response:", res.status, payloadText);
+    return;
 
-    const jobId = payload.jobId;
-    caption.textContent = "מכינים תמונה… עוד רגע 🙂";
-    await poll(jobId);
 
     } catch (err) {
     alert("ERROR: " + (err?.message || err)); // <-- הוסף
