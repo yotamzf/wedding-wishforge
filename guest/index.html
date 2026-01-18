@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>WishForge ✦ ברכה לחתן וכלה</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <main class="stage">
+    <section class="envelope" id="envelope">
+      <div class="envelope-top"></div>
+      <div class="envelope-body">
+        <header class="hero">
+          <div class="badge">✦ WishForge ✦</div>
+          <h1>משאירים ברכה / טיפ לזוג</h1>
+          <p class="sub">כותבים כמה מילים מהלב — ואנחנו הופכים את זה לתמונה קסומה במצגת + בספר הדיגיטלי.</p>
+        </header>
+
+        <form id="wishForm" class="card">
+          <div class="row">
+            <label>שם המברך</label>
+            <input name="fromName" maxlength="40" placeholder="לדוגמה: יותם" required />
+          </div>
+
+          <div class="row">
+            <label>זה…</label>
+            <div class="segmented">
+              <input type="radio" id="kindBless" name="kind" value="blessing" checked>
+              <label for="kindBless">ברכה</label>
+
+              <input type="radio" id="kindTip" name="kind" value="tip">
+              <label for="kindTip">טיפ</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <label>המלל</label>
+            <textarea name="text" id="wishText" maxlength="650" required
+              placeholder="כתבו משהו מרגש / מצחיק / חכם…"></textarea>
+            <div class="hint"><span id="count">0</span>/650</div>
+          </div>
+
+          <button type="submit" class="sealBtn">
+            <span class="seal">🔴</span>
+            אוטמים בשעווה ושולחים
+          </button>
+
+          <div class="micro">
+            <span>💡 טיפ: ברכה קצרה וחזקה = תמונה חדה ומדויקת יותר</span>
+          </div>
+        </form>
+
+        <section id="result" class="result hidden">
+          <div class="polaroid">
+            <div class="photo">
+              <div class="developing" id="developing"></div>
+              <img id="imgOut" alt="AI" />
+            </div>
+            <div class="caption" id="caption">מפתחים תמונה…</div>
+          </div>
+
+          <div class="thanks" id="thanks"></div>
+
+          <div class="actions">
+            <a id="download" class="ghost" download="wishforge.png">הורדה</a>
+            <button id="again" class="ghost">לשלוח עוד אחת</button>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <span>Made with ♥ · הברכה נשמרת בספר הזוג</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
