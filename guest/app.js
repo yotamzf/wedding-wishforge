@@ -62,7 +62,6 @@ form.addEventListener("submit", async (e) => {
 
     let payloadText = await res.text(); // לא json בינתיים
     caption.textContent = "נשלח בהצלחה ✅";
-    thanks.textContent = "התקבל ב־n8n. תודה! 🤍";
     console.log("Response:", res.status, payloadText);
     return;
 
