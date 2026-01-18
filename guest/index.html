@@ -8,17 +8,11 @@
   <link rel="stylesheet" href="./styles.css"/>
 </head>
 <body>
-  <!-- Subtle background particles (lightweight, auto-softens while writing) -->
-  <canvas id="particles" aria-hidden="true"></canvas>
-
   <main class="stage">
     <section class="shell" aria-label="ברכה או טיפ לזוג">
-      <div class="topbar">
+      <header class="top">
         <div class="names">מיכל & יותם</div>
         <div class="date">04.03.2026</div>
-      </div>
-
-      <header class="hero">
         <h1>בא לכם להשאיר לנו כמה מילים מהלב?</h1>
         <p class="sub">
           מוזמנים לכתוב ברכה או לתת טיפ קטן 🙂
@@ -36,27 +30,20 @@
 
         <div class="row">
           <label>מה בא לך להשאיר לנו?</label>
-          <div class="segmented" role="tablist" aria-label="בחירה בין ברכה לטיפ">
+          <div class="segmented" role="group" aria-label="בחירה בין ברכה לטיפ">
             <input type="radio" id="kindBless" name="kind" value="blessing" checked>
-            <label for="kindBless" title="ברכה">💛 ברכה</label>
+            <label for="kindBless">ברכה</label>
 
             <input type="radio" id="kindTip" name="kind" value="tip">
-            <label for="kindTip" title="טיפ">💡 טיפ</label>
+            <label for="kindTip">טיפ</label>
           </div>
         </div>
 
         <div class="row">
           <label for="wishText">ההודעה</label>
           <textarea id="wishText" name="text" maxlength="650" required
-            placeholder="משהו קצר, מצחיק, מרגש או חכם — מה שבא לך 💬
-זה יכול להיות גם משפט אחד."></textarea>
+            placeholder="משהו קצר, מצחיק, מרגש או חכם — מה שבא לך 🙂"></textarea>
           <div class="hint"><span id="count">0</span>/650</div>
-        </div>
-
-        <div class="row inline">
-          <button type="button" id="quietToggle" class="ghost" aria-pressed="false">
-            מצב כתיבה שקט
-          </button>
         </div>
 
         <button type="submit" class="primary">
@@ -64,29 +51,28 @@
         </button>
 
         <div class="micro">
-          טיפ קטן: אם זה ארוך — זה גם בסדר. אנחנו כבר נסדר את זה יפה בספר 🙂
+          תודה שאתם חלק מהיום שלנו 🤍
         </div>
       </form>
 
       <section id="result" class="result hidden" aria-live="polite">
-        <div class="polaroid">
-          <div class="photo">
-            <div class="developing" id="developing" aria-hidden="true"></div>
+        <div class="resultCard">
+          <div class="statusLine" id="caption">קיבלנו! רגע… מכינים לכם תמונה 🙂</div>
+
+          <div class="imgWrap" id="imgWrap">
             <img id="imgOut" alt="התמונה שנוצרה" />
           </div>
-          <div class="caption" id="caption">קיבלנו! רגע… מכינים לכם תמונה 🙂</div>
-        </div>
 
-        <div class="thanks" id="thanks"></div>
+          <div class="thanks" id="thanks"></div>
 
-        <div class="actions">
-          <a id="download" class="ghost" download="wishforge.png">להוריד את התמונה</a>
-          <button id="again" class="ghost" type="button">לשלוח עוד אחת</button>
+          <div class="actions">
+            <button id="again" class="ghost" type="button">לשלוח עוד אחת</button>
+          </div>
         </div>
       </section>
 
       <footer class="footer">
-        תודה שאתם פה איתנו 🤍
+        מיכל & יותם · 04.03.2026
       </footer>
     </section>
   </main>
